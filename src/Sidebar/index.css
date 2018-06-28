@@ -1,0 +1,15 @@
+.Sidebar {
+  width: 300px;
+  border: solid;
+  border-width: 1px 1px 1px 0;
+}
+
+.Sidebar-section {
+  padding: 20px;
+  border-bottom: 1px solid;
+}
+
+.Sidebar-section label {
+  display: block;
+  margin-top: 8px;
+}

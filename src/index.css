@@ -1,0 +1,19 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  overscroll-behavior-y: contain;
+}
+
+button {
+  padding: 4px 8px;
+  border: 1px solid #666;
+  border-radius: 2px;
+  margin-right: 12px;
+  background: #fafafa;
+}
+
+button:disabled {
+  color: #666;
+}
