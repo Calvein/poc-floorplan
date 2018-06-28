@@ -29,15 +29,15 @@ class Resizer extends Component {
   }
 
   handleDragStart = (e) => {
-    const { data } = this.props
+    const { position } = this.props
     const {
       clientX,
       clientY,
     } = this.getClientXY(e)
 
     this.setState({
-      offsetX: clientX - data.x,
-      offsetY: clientY - data.y,
+      offsetX: clientX - position.x1,
+      offsetY: clientY - position.y1,
     })
 
     // Hide the draggable "ghost" on desktop
@@ -48,7 +48,7 @@ class Resizer extends Component {
 
   handleDrag = (e) => {
     const {
-      data,
+      position,
       canvasWidth,
       canvasHeight,
       scale,
@@ -63,15 +63,17 @@ class Resizer extends Component {
       clientY,
     } = this.getClientXY(e)
     const {
-      width,
-      height,
-    } = data
+      x1,
+      y1,
+      x2,
+      y2,
+    } = position
 
     // Prevent weird case at the end of the drag when it would be 0
     if (e.clientX === 0) return
 
-    const x = Math.min(Math.max(0, clientX - offsetX), canvasWidth / scale - width)
-    const y = Math.min(Math.max(0, clientY - offsetY), canvasHeight / scale - height)
+    const x = clientX - (x1 + offsetX)
+    const y = clientY - (y1 + offsetY)
 
     onDrag({
       x,
@@ -81,61 +83,59 @@ class Resizer extends Component {
 
   makeHandleDragAnchor = ({ vertical, horizontal }) => (e) => {
     const {
-      data,
+      position,
       canvasWidth,
       canvasHeight,
       scale,
-      onDrag,
+      onResize,
     } = this.props
     const {
       clientX,
       clientY,
     } = this.getClientXY(e)
 
+    let x1 = 0
+    let y1 = 0
+    let x2 = 0
+    let y2 = 0
+
     // Prevent weird case at the end of the drag when it would be 0
     if (e.clientX === 0) return
 
-    let {
-      width,
-      height,
-      x,
-      y,
-    } = data
-
     if (vertical === 'top') {
-      y = clientY
-      height = data.height + data.y - clientY
+      y1 = clientY - position.y1
+      y2 = -y1
     } else if (vertical === 'bottom') {
-      height = clientY - data.y
+      y2 = clientY - position.y2
     }
 
     if (horizontal === 'right') {
-      width = clientX  - data.x
+      x2 = clientX - position.x2
     } else if (horizontal === 'left') {
-      x = clientX
-      width = data.width + data.x - clientX
+      x1 = clientX - position.x1
+      x2 = -x1
     }
 
     // @TODO don't prevent, add min/max instead
-    if (x < 0) return
-    if (x < 0) return
-    if (width < 0) return
-    if (height < 0) return
-    if (x + width > canvasWidth / scale) return
-    if (y + height > canvasHeight / scale) return
+    // if (x < 0) return
+    // if (x < 0) return
+    // if (width < 0) return
+    // if (height < 0) return
+    // if (x + width > canvasWidth / scale) return
+    // if (y + height > canvasHeight / scale) return
 
-    onDrag({
-      width,
-      height,
-      x,
-      y,
+    onResize({
+      x1,
+      y1,
+      x2,
+      y2,
     })
   }
 
   handleRotate = () => (e) => {
     const {
-      data,
-      onDrag,
+      position,
+      onRotate,
     } = this.props
     const {
       clientX,
@@ -145,14 +145,14 @@ class Resizer extends Component {
     // Prevent weird case at the end of the drag when it would be 0
     if (e.clientX === 0) return
 
-    const x1 = data.x + data.width / 2
-    const y1 = data.y + data.height / 2
+    const x1 = position.x1 + (position.x2 + position.x1) / 2
+    const y1 = position.y1 + (position.y2 + position.y1) / 2
     const x2 = clientX
     const y2 = clientY
     const rad = Math.atan2(y2 - y1, x2 - x1)
     const deg = (-180 - 45) + rad * 180 / Math.PI
 
-    onDrag({
+    onRotate({
       deg,
     })
   }
@@ -160,8 +160,7 @@ class Resizer extends Component {
   render() {
     const {
       scale,
-      data,
-      onClick,
+      position,
     } = this.props
 
     const wrapperStyle = {
@@ -169,9 +168,9 @@ class Resizer extends Component {
     }
 
     const containerStyle = {
-      width: data.width,
-      height: data.height,
-      transform: `translate(${data.x}px, ${data.y}px) rotate(${data.deg}deg)`,
+      width: position.x2 - position.x1,
+      height: position.y2 - position.y1,
+      transform: `translate(${position.x1}px, ${position.y1}px)`,
     }
 
     return (
@@ -179,7 +178,6 @@ class Resizer extends Component {
         <div
           className="Resizer-container"
           style={containerStyle}
-          onClick={onClick}
         >
           <div
             className="Resizer-draggable"
@@ -237,13 +235,19 @@ class Resizer extends Component {
 
 Resizer.propTypes = {
   scale: PropTypes.number.isRequired,
-  data: PropTypes.object.isRequired,
+  position: PropTypes.shape({
+    x1: PropTypes.number.isRequired,
+    y1: PropTypes.number.isRequired,
+    x2: PropTypes.number.isRequired,
+    y2: PropTypes.number.isRequired,
+  }).isRequired,
   canvasWidth: PropTypes.number.isRequired,
   canvasHeight: PropTypes.number.isRequired,
   canvasX: PropTypes.number.isRequired,
   canvasY: PropTypes.number.isRequired,
   onDrag: PropTypes.func.isRequired,
-  onClick: PropTypes.func.isRequired,
+  onResize: PropTypes.func.isRequired,
+  onRotate: PropTypes.func.isRequired,
 }
 
 export default Resizer

@@ -30,10 +30,40 @@ class Canvas extends Component {
     this.toggleElement(id)
   }
 
-  makeHandleChangeElement = (id) => (data) => {
-    const { onChangeElement } = this.props;
+  changeElement = (fn) => {
+    const {
+      elements,
+      selectedElements,
+      onChangeElement,
+    } = this.props
 
-    onChangeElement(id, data)
+    selectedElements.map((id) => {
+      const element = elements.find((element) => element.id === id)
+      onChangeElement(id, fn(element))
+    })
+
+  }
+
+  handleResize = (data) => {
+    this.changeElement((element) => ({
+      width: element.width + data.x2,
+      height: element.height + data.y2,
+      x: element.x + data.x1,
+      y: element.y + data.y1,
+    }))
+  }
+
+  handleDrag = (data) => {
+    this.changeElement((element) => ({
+      x: element.x + data.x,
+      y: element.y + data.y,
+    }))
+  }
+
+  handleRotate = (data) => {
+    this.changeElement((element) => ({
+      deg: element.deg + data.deg,
+    }))
   }
 
   updateCanvasPosition = () => {
@@ -72,6 +102,27 @@ class Canvas extends Component {
     this.setState({
       scale: +e.target.value,
     })
+  }
+
+  getResizePosition = () => {
+    const {
+      elements,
+      selectedElements,
+    } = this.props
+
+    return selectedElements
+      .map((id) => elements.find((d) => d.id === id))
+      .reduce((acc, element) => ({
+        x1: Math.min(acc.x1, element.x),
+        y1: Math.min(acc.y1, element.y),
+        x2: Math.max(acc.x2, element.x + element.width),
+        y2: Math.max(acc.y2, element.y + element.height),
+      }), {
+        x1: Infinity,
+        y1: Infinity,
+        x2: -Infinity,
+        y2: -Infinity,
+      })
   }
 
   render() {
@@ -130,7 +181,7 @@ class Canvas extends Component {
           </g>
         </svg>
         <div className="Canvas-zoom">
-          {scale}
+          {Math.floor(scale * 100)}%
           <input
             type="range"
             value={scale}
@@ -140,19 +191,19 @@ class Canvas extends Component {
             onChange={this.handleChangeScale}
           />
         </div>
-        {selectedElements.length >= 1 && selectedElements.map((id) => (
+        {selectedElements.length >= 1 && (
           <Resizer
-            key={id}
-            scale={scale}
-            data={elements.find((d) => d.id === id)}
+            position={this.getResizePosition()}
             canvasWidth={canvasWidth}
             canvasHeight={canvasHeight}
             canvasX={canvasX}
             canvasY={canvasY}
-            onDrag={this.makeHandleChangeElement(id)}
-            onClick={this.makeHandleClickElement(id)}
+            scale={scale}
+            onDrag={this.handleDrag}
+            onResize={this.handleResize}
+            onRotate={this.handleRotate}
           />
-        ))}
+        )}
       </div>
     )
   }

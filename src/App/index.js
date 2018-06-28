@@ -101,7 +101,7 @@ class App extends Component {
     this.defaultElement = {
       width: 200,
       height: 150,
-      x: 100,//width / 2 - 200 / 2,
+      x: width / 2 - 200 / 2,
       y: height / 2 - 150 / 2,
       deg: 0,
       pax: 2,
