@@ -61,7 +61,7 @@ class App extends Component {
     }))
   }
 
-  duplicateElements = () => {
+  handleDuplicateElements = () => {
     const {
       elements,
       selectedElements,
@@ -86,6 +86,36 @@ class App extends Component {
     this.addElements(newElements)
   }
 
+  editSelectedElements = (fn) => {
+    const {
+      elements,
+      selectedElements,
+    } = this.state
+
+    const modifiedElements = selectedElements.reduce((acc, id) => {
+      const element = elements[id]
+
+      return {
+        ...acc,
+        [element.id]: fn(element),
+      }
+    }, {})
+
+    this.addElements(modifiedElements)
+  }
+
+  handleSnapOnGrid = () => {
+    const gridWidth = 50
+
+    this.editSelectedElements((element) => {
+      return {
+        ...element,
+        x: Math.round(element.x / gridWidth) * gridWidth,
+        y: Math.round(element.y / gridWidth) * gridWidth,
+      }
+    })
+  }
+
   makeHandleAlignElements = (position) => () => {
     const {
       elements,
@@ -99,19 +129,10 @@ class App extends Component {
       modifiers.x = Math.min.apply(null, selectedElements.map((id) => elements[id].x))
     }
 
-    const modifiedElements = selectedElements.reduce((acc, id) => {
-      const element = elements[id]
-
-      return {
-        ...acc,
-        [element.id]: {
-          ...element,
-          ...modifiers,
-        }
-      }
-    }, {})
-
-    this.addElements(modifiedElements)
+    this.editSelectedElements((element) => ({
+      ...element,
+      ...modifiers,
+    }))
   }
 
   handleClickShowData = () => {
@@ -151,7 +172,8 @@ class App extends Component {
           hasElementsSelected={selectedElements.length > 0}
           hasMultipleElementsSelected={selectedElements.length > 1}
           onAddElement={this.addElement}
-          onDuplicateElements={this.duplicateElements}
+          onDuplicateElements={this.handleDuplicateElements}
+          onSnapOnGrid={this.handleSnapOnGrid}
           makeOnAlignElements={this.makeHandleAlignElements}
         />
         <div className="App-wrapper">
