@@ -12,6 +12,11 @@ class Sidebar extends Component {
 
     return (
       <div className="Sidebar">
+        {elements.length === 0 && (
+          <div className="Sidebar-noData">
+            Select a table
+          </div>
+        )}
         {elements.map((d) => (
           <div
             key={d.id}

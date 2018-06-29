@@ -4,6 +4,11 @@
   border-width: 1px 1px 1px 0;
 }
 
+.Sidebar-noData {
+  padding: 20px;
+  font-style: italic;
+}
+
 .Sidebar-section {
   padding: 20px;
   border-bottom: 1px solid;
@@ -12,4 +17,14 @@
 .Sidebar-section label {
   display: block;
   margin-top: 8px;
+}
+
+.Sidebar-section input {
+  border-bottom: 1px solid;
+}
+
+@media (max-width: 768px) {
+  .Sidebar {
+    display: none;
+  }
 }
