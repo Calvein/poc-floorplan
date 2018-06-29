@@ -112,19 +112,26 @@ class Canvas extends Component {
     } = this.props
 
     // @TODO Account for the deg of the elements too
-    return selectedElements
+    const position = selectedElements
       .map((id) => elements.find((d) => d.id === id))
       .reduce((acc, element) => ({
-        x1: Math.min(acc.x1, element.x) - 8,
-        y1: Math.min(acc.y1, element.y) - 8,
-        x2: Math.max(acc.x2, element.x + element.width) + 8,
-        y2: Math.max(acc.y2, element.y + element.height) + 8,
+        x1: Math.min(acc.x1, element.x),
+        y1: Math.min(acc.y1, element.y),
+        x2: Math.max(acc.x2, element.x + element.width),
+        y2: Math.max(acc.y2, element.y + element.height),
       }), {
         x1: Infinity,
         y1: Infinity,
         x2: -Infinity,
         y2: -Infinity,
       })
+
+    return {
+      x1: position.x1 - 8,
+      y1: position.y1 - 8,
+      x2: position.x2 + 8,
+      y2: position.y2 + 8,
+    }
   }
 
   render() {

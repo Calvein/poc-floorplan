@@ -7,8 +7,10 @@ class Toolbar extends Component {
   render() {
     const {
       hasElementsSelected,
+      hasMultipleElementsSelected,
       onAddElement,
       onDuplicateElements,
+      makeOnAlignElements,
     } = this.props
 
     return (
@@ -22,6 +24,18 @@ class Toolbar extends Component {
         >
           Duplicate
         </button>
+        <button
+          disabled={!hasMultipleElementsSelected}
+          onClick={makeOnAlignElements('top')}
+        >
+          Align top
+        </button>
+        <button
+          disabled={!hasMultipleElementsSelected}
+          onClick={makeOnAlignElements('left')}
+        >
+          Align left
+        </button>
       </div>
     )
   }
@@ -29,8 +43,10 @@ class Toolbar extends Component {
 
 Toolbar.propTypes = {
   hasElementsSelected: PropTypes.bool.isRequired,
+  hasMultipleElementsSelected: PropTypes.bool.isRequired,
   onAddElement: PropTypes.func.isRequired,
   onDuplicateElements: PropTypes.func.isRequired,
+  makeOnAlignElements: PropTypes.func.isRequired,
 }
 
 export default Toolbar

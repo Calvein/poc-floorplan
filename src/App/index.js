@@ -16,6 +16,16 @@ class App extends Component {
 
   canvasRef = createRef()
 
+  createElement() {
+    const id = uniqueId()
+
+    return {
+      ...this.defaultElement,
+      label: `Table ${id}`,
+      id,
+    }
+  }
+
   setSelectedElements = (selectedElements = []) => {
     this.setState({
       selectedElements,
@@ -66,8 +76,8 @@ class App extends Component {
         [newId]: {
           ...element,
           id: newId,
-          x: element.x + 20,
-          y: element.y + 20,
+          x: element.x + 50,
+          y: element.y + 50,
           label: `${element.label} (${newId})`,
         }
       }
@@ -76,14 +86,32 @@ class App extends Component {
     this.addElements(newElements)
   }
 
-  createElement() {
-    const id = uniqueId()
+  makeHandleAlignElements = (position) => () => {
+    const {
+      elements,
+      selectedElements,
+    } = this.state
 
-    return {
-      ...this.defaultElement,
-      label: `Table ${id}`,
-      id,
+    let modifiers = {}
+    if (position === 'top') {
+      modifiers.y = Math.min.apply(null, selectedElements.map((id) => elements[id].y))
+    } else if (position === 'left') {
+      modifiers.x = Math.min.apply(null, selectedElements.map((id) => elements[id].x))
     }
+
+    const modifiedElements = selectedElements.reduce((acc, id) => {
+      const element = elements[id]
+
+      return {
+        ...acc,
+        [element.id]: {
+          ...element,
+          ...modifiers,
+        }
+      }
+    }, {})
+
+    this.addElements(modifiedElements)
   }
 
   handleClickShowData = () => {
@@ -120,9 +148,11 @@ class App extends Component {
     return (
       <div>
         <Toolbar
+          hasElementsSelected={selectedElements.length > 0}
+          hasMultipleElementsSelected={selectedElements.length > 1}
           onAddElement={this.addElement}
           onDuplicateElements={this.duplicateElements}
-          hasElementsSelected={selectedElements.length > 0}
+          makeOnAlignElements={this.makeHandleAlignElements}
         />
         <div className="App-wrapper">
           <Canvas

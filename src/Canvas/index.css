@@ -25,6 +25,7 @@
 
 .Canvas-text {
   fill: #fff;
+  pointer-events: none;
 }
 
 .Canvas-text-pax {
