@@ -148,6 +148,14 @@ class App extends Component {
     }))
   }
 
+  handleChangeElements = (e) => {
+    try {
+      this.setState({
+        elements: JSON.parse(e.target.value),
+      })
+    } catch (e) {}
+  }
+
   componentDidMount() {
     const {
       width,
@@ -203,12 +211,14 @@ class App extends Component {
         </div>
         <div className="App-data">
             <button onClick={this.handleClickShowData}>
-              Show data (app will be a lot slower when this is open)
+              Show/Edit data (app will be a lot slower when this is open)
             </button>
             {areDataShown && (
-              <pre>
-                {JSON.stringify(Object.values(elements), null, 2)}
-              </pre>
+              <textarea
+                className="App-data-textarea"
+                value={JSON.stringify(elements, null, 2)}
+                onChange={this.handleChangeElements}
+              />
             )}
         </div>
       </div>

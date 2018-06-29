@@ -5,3 +5,10 @@
 .App-data {
   margin: 8px;
 }
+
+.App-data-textarea {
+  display: block;
+  width: 100%;
+  min-height: 300px;
+  font-family: monospace;
+}
