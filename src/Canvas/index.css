@@ -38,6 +38,7 @@
 
 .Canvas-text {
   fill: #fff;
+  text-anchor: middle;
   pointer-events: none;
 }
 

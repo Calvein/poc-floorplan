@@ -206,7 +206,7 @@ class Canvas extends Component {
                 />
                 <g
                   className="Canvas-text"
-                  transform={`translate(8 ${d.height / 2})`}
+                  transform={`translate(${d.width / 2} ${d.height / 2})`}
                 >
                   <text className="Canvas-text-label">
                     {d.label}
