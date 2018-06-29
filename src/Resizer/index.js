@@ -12,7 +12,9 @@ hiddenMask.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAAC
 class Resizer extends Component {
   state = {
     offsetX: 0,
-    offsetY: 0,
+    offsetX: 0,
+    rotationOffsetY: 0,
+    rotationOffsetY: 0,
   }
 
   getClientXY = (e) => {
@@ -28,7 +30,7 @@ class Resizer extends Component {
     }
   }
 
-  handleDragStart = (e) => {
+  handleDragElementStart = (e) => {
     const { position } = this.props
     const {
       clientX,
@@ -46,7 +48,7 @@ class Resizer extends Component {
     }
   }
 
-  handleDrag = (e) => {
+  handleDragElement = (e) => {
     const {
       position,
       canvasWidth,
@@ -132,11 +134,15 @@ class Resizer extends Component {
     })
   }
 
-  handleRotate = () => (e) => {
+  handleRotate = (e) => {
     const {
       position,
       onRotate,
     } = this.props
+    const {
+      rotationOffsetX,
+      rotationOffsetY,
+    } = this.state
     const {
       clientX,
       clientY,
@@ -145,8 +151,9 @@ class Resizer extends Component {
     // Prevent weird case at the end of the drag when it would be 0
     if (e.clientX === 0) return
 
-    const x1 = position.x1 + (position.x2 + position.x1) / 2
-    const y1 = position.y1 + (position.y2 + position.y1) / 2
+    // @TODO Make a diff of the degress instead of setting a new one
+    const x1 = position.x1 + (position.x2 - position.x1) / 2
+    const y1 = position.y1 + (position.y2 - position.y1) / 2
     const x2 = clientX
     const y2 = clientY
     const rad = Math.atan2(y2 - y1, x2 - x1)
@@ -182,10 +189,10 @@ class Resizer extends Component {
           <div
             className="Resizer-draggable"
             draggable
-            onDragStart={this.handleDragStart}
-            onTouchStart={this.handleDragStart}
-            onDrag={this.handleDrag}
-            onTouchMove={this.handleDrag}
+            onDragStart={this.handleDragElementStart}
+            onTouchStart={this.handleDragElementStart}
+            onDrag={this.handleDragElement}
+            onTouchMove={this.handleDragElement}
           />
           <Anchor
             vertical="top"
@@ -225,7 +232,7 @@ class Resizer extends Component {
           />
           <Anchor
             isRotation
-            makeOnDrag={this.handleRotate}
+            onDrag={this.handleRotate}
           />
         </div>
       </div>

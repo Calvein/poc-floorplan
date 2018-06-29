@@ -99,10 +99,10 @@ class App extends Component {
     } = this.canvasRef.current.getBoundingClientRect()
 
     this.defaultElement = {
-      width: 200,
-      height: 150,
-      x: width / 2 - 200 / 2,
-      y: height / 2 - 150 / 2,
+      width: 100,
+      height: 100,
+      x: width / 2 - 100 / 2,
+      y: height / 2 - 100 / 2,
       deg: 0,
       pax: 2,
     }

@@ -21,6 +21,8 @@ class ResizerAnchor extends Component {
       vertical,
       horizontal,
       isRotation,
+      onDragStart,
+      onDrag,
       makeOnDrag,
     } = this.props
 
@@ -33,9 +35,10 @@ class ResizerAnchor extends Component {
           { 'ResizerAnchor-rotation': isRotation },
         )}
         draggable
-        onDragStart={this.handleDragStartAnchor}
-        onDrag={makeOnDrag({ vertical, horizontal })}
-        onTouchMove={makeOnDrag({ vertical, horizontal })}
+        onDragStart={onDragStart ? onDragStart : this.handleDragStartAnchor}
+        onTouchStart={onDragStart ? onDragStart : this.handleDragStartAnchor}
+        onDrag={onDrag ? onDrag : makeOnDrag({ vertical, horizontal })}
+        onTouchMove={onDrag ? onDrag : makeOnDrag({ vertical, horizontal })}
       />
     )
   }
@@ -51,7 +54,9 @@ ResizerAnchor.propTypes = {
     'right',
   ]),
   isRotation: PropTypes.bool.isRequired,
-  makeOnDrag: PropTypes.func.isRequired,
+  makeOnDrag: PropTypes.func,
+  onDragStart: PropTypes.func,
+  onDrag: PropTypes.func,
 }
 
 ResizerAnchor.defaultProps = {

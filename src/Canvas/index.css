@@ -25,7 +25,11 @@
 
 .Canvas-text {
   fill: #fff;
-  text-anchor: middle;
+}
+
+.Canvas-text-pax {
+  font-size: 14px;
+  font-weight: 300;
 }
 
 .Canvas-zoom {

@@ -62,7 +62,8 @@ class Canvas extends Component {
 
   handleRotate = (data) => {
     this.changeElement((element) => ({
-      deg: element.deg + data.deg,
+      // @TODO Add diff with element's deg
+      deg: data.deg,
     }))
   }
 
@@ -110,13 +111,14 @@ class Canvas extends Component {
       selectedElements,
     } = this.props
 
+    // @TODO Account for the deg of the elements too
     return selectedElements
       .map((id) => elements.find((d) => d.id === id))
       .reduce((acc, element) => ({
-        x1: Math.min(acc.x1, element.x),
-        y1: Math.min(acc.y1, element.y),
-        x2: Math.max(acc.x2, element.x + element.width),
-        y2: Math.max(acc.y2, element.y + element.height),
+        x1: Math.min(acc.x1, element.x) - 8,
+        y1: Math.min(acc.y1, element.y) - 8,
+        x2: Math.max(acc.x2, element.x + element.width) + 8,
+        y2: Math.max(acc.y2, element.y + element.height) + 8,
       }), {
         x1: Infinity,
         y1: Infinity,
@@ -167,12 +169,15 @@ class Canvas extends Component {
                 />
                 <g
                   className="Canvas-text"
-                  transform={`translate(${d.width / 2} ${d.height / 2})`}
+                  transform={`translate(8 ${d.height / 2})`}
                 >
-                  <text>
+                  <text className="Canvas-text-label">
                     {d.label}
                   </text>
-                  <text dy="18">
+                  <text
+                    className="Canvas-text-pax"
+                    dy="18"
+                  >
                     {d.pax}p
                   </text>
                 </g>
