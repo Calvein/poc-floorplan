@@ -207,7 +207,7 @@ class App extends Component {
             </button>
             {areDataShown && (
               <pre>
-                {JSON.stringify(elements, null, 2)}
+                {JSON.stringify(Object.values(elements), null, 2)}
               </pre>
             )}
         </div>
