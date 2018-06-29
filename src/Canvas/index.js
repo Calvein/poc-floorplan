@@ -37,7 +37,7 @@ class Canvas extends Component {
       onChangeElement,
     } = this.props
 
-    selectedElements.map((id) => {
+    selectedElements.forEach((id) => {
       const element = elements.find((element) => element.id === id)
       onChangeElement(id, fn(element))
     })

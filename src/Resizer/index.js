@@ -12,9 +12,7 @@ hiddenMask.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAAC
 class Resizer extends Component {
   state = {
     offsetX: 0,
-    offsetX: 0,
-    rotationOffsetY: 0,
-    rotationOffsetY: 0,
+    offsetY: 0,
   }
 
   getClientXY = (e) => {
@@ -51,9 +49,6 @@ class Resizer extends Component {
   handleDragElement = (e) => {
     const {
       position,
-      canvasWidth,
-      canvasHeight,
-      scale,
       onDrag,
     } = this.props
     const {
@@ -67,8 +62,6 @@ class Resizer extends Component {
     const {
       x1,
       y1,
-      x2,
-      y2,
     } = position
 
     // Prevent weird case at the end of the drag when it would be 0
@@ -86,9 +79,6 @@ class Resizer extends Component {
   makeHandleDragAnchor = ({ vertical, horizontal }) => (e) => {
     const {
       position,
-      canvasWidth,
-      canvasHeight,
-      scale,
       onResize,
     } = this.props
     const {
@@ -139,10 +129,6 @@ class Resizer extends Component {
       position,
       onRotate,
     } = this.props
-    const {
-      rotationOffsetX,
-      rotationOffsetY,
-    } = this.state
     const {
       clientX,
       clientY,
