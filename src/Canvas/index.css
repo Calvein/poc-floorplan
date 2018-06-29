@@ -2,7 +2,8 @@
   position: relative;
   height: 80vh;
   width: 100%;
-  border: 1px solid;
+  border: solid;
+  border-width: 1px 1px 1px 0;
   overflow: hidden;
 }
 
@@ -24,7 +25,7 @@
 }
 
 .Canvas-element-selected rect {
-  stroke: #589442;
+  stroke: var(--green);
   stroke-width: 6;
 }
 

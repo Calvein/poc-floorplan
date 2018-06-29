@@ -1,16 +1,16 @@
 .Sidebar {
   width: 300px;
   border: solid;
-  border-width: 1px 1px 1px 0;
+  border-width: 1px 0;
 }
 
 .Sidebar-noData {
-  padding: 20px;
+  padding: 16px;
   font-style: italic;
 }
 
 .Sidebar-section {
-  padding: 20px;
+  padding: 16px;
   border-bottom: 1px solid;
 }
 
@@ -20,6 +20,7 @@
 }
 
 .Sidebar-section input {
+  display: block;
   border-bottom: 1px solid;
 }
 

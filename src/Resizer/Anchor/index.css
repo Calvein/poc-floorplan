@@ -31,7 +31,7 @@
 .ResizerAnchor-rotation {
   top: -24px;
   left: -24px;
-  background: #f5a300;
+  background: var(--orange);
 }
 
 @media (max-width: 1024px) {

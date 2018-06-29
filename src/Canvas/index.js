@@ -46,8 +46,8 @@ class Canvas extends Component {
 
   handleResize = (data) => {
     this.changeElement((element) => ({
-      width: element.width + data.x2,
-      height: element.height + data.y2,
+      width: Math.max(0, element.width + data.x2),
+      height: Math.max(0, element.height + data.y2),
       x: element.x + data.x1,
       y: element.y + data.y1,
     }))
