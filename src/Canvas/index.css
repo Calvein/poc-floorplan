@@ -11,6 +11,18 @@
   height: 100%;
 }
 
+#smallGrid,
+#grid {
+  fill: none;
+  stroke: #a8a8a8;
+  stroke-width: 0.25;
+  shape-rendering: crispEdges;
+}
+
+#grid {
+  stroke-width: 1;
+}
+
 .Canvas-element-selected rect {
   stroke: #589442;
   stroke-width: 6;

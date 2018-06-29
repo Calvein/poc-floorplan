@@ -8,8 +8,10 @@ class Toolbar extends Component {
     const {
       hasElementsSelected,
       hasMultipleElementsSelected,
+      isGridShown,
       onAddElement,
       onDuplicateElements,
+      onToggleGrid,
       onSnapOnGrid,
       makeOnAlignElements,
     } = this.props
@@ -24,6 +26,9 @@ class Toolbar extends Component {
           onClick={onDuplicateElements}
         >
           Duplicate
+        </button>
+        <button onClick={onToggleGrid}>
+          {isGridShown ? 'Hide' : 'Show'} grid
         </button>
         <button
           disabled={!hasElementsSelected}
@@ -51,8 +56,10 @@ class Toolbar extends Component {
 Toolbar.propTypes = {
   hasElementsSelected: PropTypes.bool.isRequired,
   hasMultipleElementsSelected: PropTypes.bool.isRequired,
+  isGridShown: PropTypes.bool.isRequired,
   onAddElement: PropTypes.func.isRequired,
   onDuplicateElements: PropTypes.func.isRequired,
+  onToggleGrid: PropTypes.func.isRequired,
   onSnapOnGrid: PropTypes.func.isRequired,
   makeOnAlignElements: PropTypes.func.isRequired,
 }

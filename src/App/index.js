@@ -7,11 +7,14 @@ import Sidebar from '../Sidebar'
 
 import './index.css'
 
+const GRID_WIDTH = 50
+
 class App extends Component {
   state = {
     elements: {},
     selectedElements: [],
-    isShowingData: false,
+    areDataShown: false,
+    isGridShown: false,
   }
 
   canvasRef = createRef()
@@ -104,14 +107,18 @@ class App extends Component {
     this.addElements(modifiedElements)
   }
 
-  handleSnapOnGrid = () => {
-    const gridWidth = 50
+  handleToggleGrid = () => {
+    this.setState(({ isGridShown }) => ({
+      isGridShown: !isGridShown,
+    }))
+  }
 
+  handleSnapOnGrid = () => {
     this.editSelectedElements((element) => {
       return {
         ...element,
-        x: Math.round(element.x / gridWidth) * gridWidth,
-        y: Math.round(element.y / gridWidth) * gridWidth,
+        x: Math.round(element.x / GRID_WIDTH) * GRID_WIDTH,
+        y: Math.round(element.y / GRID_WIDTH) * GRID_WIDTH,
       }
     })
   }
@@ -136,8 +143,8 @@ class App extends Component {
   }
 
   handleClickShowData = () => {
-    this.setState(({ isShowingData }) => ({
-      isShowingData: !isShowingData
+    this.setState(({ areDataShown }) => ({
+      areDataShown: !areDataShown
     }))
   }
 
@@ -163,7 +170,8 @@ class App extends Component {
     const {
       elements,
       selectedElements,
-      isShowingData,
+      isGridShown,
+      areDataShown,
     } = this.state
 
     return (
@@ -171,13 +179,17 @@ class App extends Component {
         <Toolbar
           hasElementsSelected={selectedElements.length > 0}
           hasMultipleElementsSelected={selectedElements.length > 1}
+          isGridShown={isGridShown}
           onAddElement={this.addElement}
           onDuplicateElements={this.handleDuplicateElements}
+          onToggleGrid={this.handleToggleGrid}
           onSnapOnGrid={this.handleSnapOnGrid}
           makeOnAlignElements={this.makeHandleAlignElements}
         />
         <div className="App-wrapper">
           <Canvas
+            gridWidth={GRID_WIDTH}
+            isGridShown={isGridShown}
             canvasRef={this.canvasRef}
             elements={Object.values(elements)}
             selectedElements={selectedElements}
@@ -193,7 +205,7 @@ class App extends Component {
             <button onClick={this.handleClickShowData}>
               Show data (app will be a lot slower when this is open)
             </button>
-            {isShowingData && (
+            {areDataShown && (
               <pre>
                 {JSON.stringify(elements, null, 2)}
               </pre>

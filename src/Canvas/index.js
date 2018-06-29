@@ -136,6 +136,8 @@ class Canvas extends Component {
 
   render() {
     const {
+      gridWidth,
+      isGridShown,
       canvasRef,
       elements,
       selectedElements,
@@ -150,15 +152,43 @@ class Canvas extends Component {
     } = this.state
 
     return (
-      <div
-        className="Canvas"
-      >
+      <div className="Canvas">
         <svg
           className="Canvas-svg"
           ref={canvasRef}
           onClick={this.handleClickCanvas}
         >
+          <defs>
+            <pattern
+              id="smallGrid"
+              width={gridWidth / 10}
+              height={gridWidth / 10}
+              patternUnits="userSpaceOnUse"
+            >
+              <path d={`M ${gridWidth / 10} 0 L 0 0 0 ${gridWidth / 10}`} />
+            </pattern>
+            <pattern
+              id="grid"
+              width={gridWidth}
+              height={gridWidth}
+              patternUnits="userSpaceOnUse"
+            >
+               <rect
+                width={gridWidth}
+                height={gridWidth}
+                fill="url(#smallGrid)"
+              />
+                <path d={`M ${gridWidth} 0 L 0 0 0 ${gridWidth}`} />
+             </pattern>
+          </defs>
           <g transform={`scale(${scale})`}>
+            {isGridShown && (
+              <rect
+                width="1000%"
+                height="1000%"
+                fill="url(#grid)"
+              />
+            )}
             {elements.map((d) => (
               <g
                 key={d.id}
@@ -197,7 +227,7 @@ class Canvas extends Component {
           <input
             type="range"
             value={scale}
-            min={0.2}
+            min={0.25}
             max={1.75}
             step={0.05}
             onChange={this.handleChangeScale}
@@ -222,6 +252,8 @@ class Canvas extends Component {
 }
 
 Canvas.propTypes = {
+  gridWidth: PropTypes.number.isRequired,
+  isGridShown: PropTypes.bool.isRequired,
   canvasRef: PropTypes.object.isRequired,
   elements: PropTypes.array.isRequired,
   selectedElements: PropTypes.array.isRequired,
