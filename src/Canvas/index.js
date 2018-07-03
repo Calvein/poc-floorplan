@@ -202,7 +202,7 @@ class Canvas extends Component {
                   transform={`rotate(${d.deg}, ${d.width / 2}, ${d.height / 2})`}
                   width={d.width}
                   height={d.height}
-                  onClick={this.makeHandleClickElement(d.id)}
+                  onMouseDown={this.makeHandleClickElement(d.id)}
                 />
                 <g
                   className="Canvas-text"
