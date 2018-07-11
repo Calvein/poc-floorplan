@@ -41,13 +41,12 @@ class Canvas extends Component {
       const element = elements.find((element) => element.id === id)
       onChangeElement(id, fn(element))
     })
-
   }
 
   handleResize = (data) => {
     this.changeElement((element) => ({
-      width: Math.max(0, element.width + data.x2),
-      height: Math.max(0, element.height + data.y2),
+      width: Math.max(25, element.width + data.x2),
+      height: Math.max(25, element.height + data.y2),
       x: element.x + data.x1,
       y: element.y + data.y1,
     }))

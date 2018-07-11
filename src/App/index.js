@@ -79,8 +79,7 @@ class App extends Component {
         [newId]: {
           ...element,
           id: newId,
-          x: element.x + 50,
-          y: element.y + 50,
+          x: element.x + element.width + 10,
           label: `${element.label} (${newId})`,
         }
       }
