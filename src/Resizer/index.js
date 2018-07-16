@@ -36,8 +36,8 @@ class Resizer extends Component {
     } = this.getClientXY(e)
 
     this.setState({
-      offsetX: clientX - position.x1,
-      offsetY: clientY - position.y1,
+      offsetX: clientX - position.x,
+      offsetY: clientY - position.y,
     })
 
     // Hide the draggable "ghost" on desktop
@@ -59,16 +59,12 @@ class Resizer extends Component {
       clientX,
       clientY,
     } = this.getClientXY(e)
-    const {
-      x1,
-      y1,
-    } = position
 
     // Prevent weird case at the end of the drag when it would be 0
     if (e.clientX === 0) return
 
-    const x = clientX - (x1 + offsetX)
-    const y = clientY - (y1 + offsetY)
+    const x = clientX - (position.x + offsetX)
+    const y = clientY - (position.y + offsetY)
 
     onDrag({
       x,
@@ -86,42 +82,50 @@ class Resizer extends Component {
       clientY,
     } = this.getClientXY(e)
 
-    let x1 = 0
-    let y1 = 0
-    let x2 = 0
-    let y2 = 0
+    const oldPositions = {
+      topLeft: {
+        x: position.x,
+        y: position.y
+      },
+      bottomRight: {
+        x: position.x + position.width,
+        y: position.y + position.height
+      },
+    };
+
+    const newPositions = {
+      topLeft: {
+        x: (!horizontal || horizontal === 'right') ? oldPositions.topLeft.x : clientX,
+        y: (!vertical || vertical === 'bottom') ? oldPositions.topLeft.y : clientY,
+      },
+      bottomRight: {
+        x: (!horizontal || horizontal === 'left') ? oldPositions.bottomRight.x : clientX,
+        y: (!vertical || vertical) === 'top' ? oldPositions.bottomRight.y : clientY,
+      },
+    }
 
     // Prevent weird case at the end of the drag when it would be 0
     if (e.clientX === 0) return
 
-    if (vertical === 'top') {
-      y1 = clientY - position.y1
-      y2 = -y1
-    } else if (vertical === 'bottom') {
-      y2 = clientY - position.y2
+    const translate = {
+      x: newPositions.topLeft.x - oldPositions.topLeft.x,
+      y: newPositions.topLeft.y - oldPositions.topLeft.y,
     }
 
-    if (horizontal === 'right') {
-      x2 = clientX - position.x2
-    } else if (horizontal === 'left') {
-      x1 = clientX - position.x1
-      x2 = -x1
+    const oldWidth = oldPositions.bottomRight.x - oldPositions.topLeft.x
+    const oldHeight = oldPositions.bottomRight.y - oldPositions.topLeft.y
+
+    const newWidth = newPositions.bottomRight.x - newPositions.topLeft.x
+    const newHeight = newPositions.bottomRight.y - newPositions.topLeft.y
+
+    console.log(oldWidth, newWidth, newPositions, oldPositions);
+
+    const scale = {
+      x: newWidth / oldWidth,
+      y: newHeight / oldHeight,
     }
 
-    // @TODO don't prevent, add min/max instead
-    // if (x < 0) return
-    // if (x < 0) return
-    // if (width < 0) return
-    // if (height < 0) return
-    // if (x + width > canvasWidth / scale) return
-    // if (y + height > canvasHeight / scale) return
-
-    onResize({
-      x1,
-      y1,
-      x2,
-      y2,
-    })
+    onResize({ translate, scale })
   }
 
   handleRotate = (e) => {
@@ -138,16 +142,21 @@ class Resizer extends Component {
     if (e.clientX === 0) return
 
     // @TODO Make a diff of the degress instead of setting a new one
-    const x1 = position.x1 + (position.x2 - position.x1) / 2
-    const y1 = position.y1 + (position.y2 - position.y1) / 2
+    const x1 = position.x + position.width / 2
+    const y1 = position.y + position.height / 2
     const x2 = clientX
     const y2 = clientY
+
     const rad = Math.atan2(y2 - y1, x2 - x1)
     const deg = (-180 - 45) + rad * 180 / Math.PI
 
     onRotate({
       deg,
     })
+  }
+
+  handleRotateEnd = () => {
+
   }
 
   render() {
@@ -161,9 +170,9 @@ class Resizer extends Component {
     }
 
     const containerStyle = {
-      width: position.x2 - position.x1,
-      height: position.y2 - position.y1,
-      transform: `translate(${position.x1}px, ${position.y1}px)`,
+      width: position.width,
+      height: position.height,
+      transform: `translate(${position.x}px, ${position.y}px)`,
     }
 
     return (
@@ -219,6 +228,7 @@ class Resizer extends Component {
           <Anchor
             isRotation
             onDrag={this.handleRotate}
+            onDragEnd={this.handleRotateEnd}
           />
         </div>
       </div>
@@ -229,10 +239,10 @@ class Resizer extends Component {
 Resizer.propTypes = {
   scale: PropTypes.number.isRequired,
   position: PropTypes.shape({
-    x1: PropTypes.number.isRequired,
-    y1: PropTypes.number.isRequired,
-    x2: PropTypes.number.isRequired,
-    y2: PropTypes.number.isRequired,
+    x: PropTypes.number.isRequired,
+    y: PropTypes.number.isRequired,
+    width: PropTypes.number.isRequired,
+    height: PropTypes.number.isRequired,
   }).isRequired,
   canvasWidth: PropTypes.number.isRequired,
   canvasHeight: PropTypes.number.isRequired,

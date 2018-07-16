@@ -1,5 +1,6 @@
 import React, { Component, createRef } from 'react'
 import { uniqueId } from 'lodash'
+import getBounds from 'svg-path-bounds';
 
 import Toolbar from '../Toolbar'
 import Canvas from '../Canvas'
@@ -35,6 +36,17 @@ class App extends Component {
     })
   }
 
+  getBbox = (path) => {
+    const [left, top, right, bottom] = getBounds(path);
+
+    return {
+      x: left,
+      y: top,
+      width: right - left,
+      height: bottom - top,
+    };
+  }
+
   changeElement = (id, data) => {
     this.setState((state) => ({
       elements: {
@@ -42,6 +54,7 @@ class App extends Component {
         [id]: {
           ...state.elements[id],
           ...data,
+          bbox: data.path ? this.getBbox(data.path) : state.elements[id].bbox,
         }
       }
     }))
@@ -162,11 +175,8 @@ class App extends Component {
     } = this.canvasRef.current.getBoundingClientRect()
 
     this.defaultElement = {
-      width: 100,
-      height: 100,
-      x: width / 2 - 100 / 2,
-      y: height / 2 - 100 / 2,
-      deg: 0,
+      path: 'M 0 0 L 100 0 L 100 100 L 0 100 Z',
+      bbox: { x: 0, y: 0, width: 100, height: 100 },
       pax: 2,
     }
 

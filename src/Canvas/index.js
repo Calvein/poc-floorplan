@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import classnames from 'classnames'
+import svgpath from 'svgpath';
 
 import Resizer from '../Resizer'
 
@@ -45,25 +46,30 @@ class Canvas extends Component {
 
   handleResize = (data) => {
     this.changeElement((element) => ({
-      width: Math.max(25, element.width + data.x2),
-      height: Math.max(25, element.height + data.y2),
-      x: element.x + data.x1,
-      y: element.y + data.y1,
-    }))
+      path: svgpath(element.path)
+        .translate(data.translate.x, data.translate.y)
+        .scale(data.scale.x, data.scale.y)
+        .toString()
+    }));
   }
 
   handleDrag = (data) => {
     this.changeElement((element) => ({
-      x: element.x + data.x,
-      y: element.y + data.y,
+      path: svgpath(element.path).translate(data.x, data.y).toString(),
     }))
   }
 
   handleRotate = (data) => {
-    this.changeElement((element) => ({
-      // @TODO Add diff with element's deg
-      deg: data.deg,
-    }))
+    this.changeElement((element) => {
+      return {
+        // @TODO Add diff with element's deg
+        path: svgpath(element.path).rotate(
+          data.deg,
+          element.bbox.x + element.bbox.width / 2,
+          element.bbox.y + element.bbox.height / 2,
+        ).toString(),
+      }
+    })
   }
 
   updateCanvasPosition = () => {
@@ -114,10 +120,10 @@ class Canvas extends Component {
     const position = selectedElements
       .map((id) => elements.find((d) => d.id === id))
       .reduce((acc, element) => ({
-        x1: Math.min(acc.x1, element.x),
-        y1: Math.min(acc.y1, element.y),
-        x2: Math.max(acc.x2, element.x + element.width),
-        y2: Math.max(acc.y2, element.y + element.height),
+        x1: Math.min(acc.x1, element.bbox.x),
+        y1: Math.min(acc.y1, element.bbox.y),
+        x2: Math.max(acc.x2, element.bbox.x + element.bbox.width),
+        y2: Math.max(acc.y2, element.bbox.y + element.bbox.height),
       }), {
         x1: Infinity,
         y1: Infinity,
@@ -126,10 +132,10 @@ class Canvas extends Component {
       })
 
     return {
-      x1: position.x1 - 8,
-      y1: position.y1 - 8,
-      x2: position.x2 + 8,
-      y2: position.y2 + 8,
+      x: position.x1,
+      y: position.y1,
+      width: position.x2 - position.x1,
+      height: position.y2 - position.y1,
     }
   }
 
@@ -194,18 +200,15 @@ class Canvas extends Component {
                 className={classnames(
                   { 'Canvas-element-selected': selectedElements.includes(d.id) },
                 )}
-                transform={`translate(${d.x} ${d.y})`}
               >
-                <rect
+                <path
                   className="Canvas-rect"
-                  transform={`rotate(${d.deg}, ${d.width / 2}, ${d.height / 2})`}
-                  width={d.width}
-                  height={d.height}
+                  d={d.path}
                   onMouseDown={this.makeHandleClickElement(d.id)}
                 />
                 <g
                   className="Canvas-text"
-                  transform={`translate(${d.width / 2} ${d.height / 2})`}
+                  transform={`translate(${d.bbox.x + d.bbox.width / 2} ${d.bbox.y + d.bbox.height / 2})`}
                 >
                   <text className="Canvas-text-label">
                     {d.label}

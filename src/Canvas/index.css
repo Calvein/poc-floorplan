@@ -24,7 +24,7 @@
   stroke-width: 1;
 }
 
-.Canvas-element-selected rect {
+.Canvas-element-selected path {
   stroke: var(--green);
   stroke-width: 6;
 }
