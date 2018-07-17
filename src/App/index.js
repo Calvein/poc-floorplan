@@ -334,8 +334,8 @@ class App extends Component {
     } = this.canvasRef.current.getBoundingClientRect()
 
     this.defaultElement = {
-      path: 'M 0 0 L50 25 L 100 0 L 100 100 L 0 100 Z',
-      bbox: { x: 0, y: 0, width: 100, height: 100 },
+      path: 'M100 100 L150 125 L200 100 L200 200 L100 200 Z',
+      bbox: { x: 100, y: 100, width: 100, height: 100 },
       pax: 2,
       nextPath: null,
       nextBbox: null,
