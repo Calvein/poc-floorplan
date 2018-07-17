@@ -173,6 +173,9 @@ class App extends Component {
       case 'left':
         modifiers.x = Math.min.apply(null, selectedElements.map((id) => elements[id].bbox.x))
         break;
+      case 'right':
+        modifiers.x = Math.max.apply(null, selectedElements.map((id) => elements[id].bbox.x + elements[id].bbox.width))
+        break;
     }
 
     this.editSelectedElements((element) => {
@@ -187,6 +190,9 @@ class App extends Component {
           break;
           case 'left':
           newPath = newPath.translate(modifiers.x - element.bbox.x)
+          break;
+          case 'right':
+          newPath = newPath.translate(modifiers.x - element.bbox.width - element.bbox.x)
           break;
       }
 
