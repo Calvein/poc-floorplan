@@ -45,12 +45,29 @@ class Canvas extends Component {
   }
 
   handleResize = (data) => {
-    this.changeElement((element) => ({
-      path: svgpath(element.path)
-        .translate(data.translate.x, data.translate.y)
-        .scale(data.scale.x, data.scale.y)
-        .toString()
-    }));
+    const { x, y } = this.getResizePosition({ next: false });
+    this.changeElement((element) => {
+      return {
+        nextPath: svgpath(element.path)
+          .translate(-x, -y)
+          .scale(data.scale.x, data.scale.y)
+          .translate(x + data.translate.x, y + data.translate.y)
+          .toString()
+      }
+    });
+  }
+
+  handleResizeEnd = (data) => {
+    const { x, y } = this.getResizePosition({ next: false });
+    this.changeElement((element) => {
+      return {
+        path: svgpath(element.path)
+          .translate(-x, -y)
+          .scale(data.scale.x, data.scale.y)
+          .translate(x + data.translate.x, y + data.translate.y)
+          .toString()
+      }
+    });
   }
 
   handleDrag = (data) => {
@@ -275,6 +292,7 @@ class Canvas extends Component {
             onDrag={this.handleDrag}
             onDragEnd={this.handleDragEnd}
             onResize={this.handleResize}
+            onResizeEnd={this.handleResizeEnd}
             onRotate={this.handleRotate}
             onRotateEnd={this.handleRotateEnd}
           />

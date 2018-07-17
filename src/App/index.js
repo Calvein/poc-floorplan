@@ -56,6 +56,11 @@ class App extends Component {
         nextBbox: data.nextPath ? this.getBbox(data.nextPath) : state.elements[id].nextBbox,
       };
 
+      if (nextState.nextPath === nextState.path) {
+        nextState.nextPath = null;
+        nextState.nextBbox = null;
+      }
+
       return {
         elements: {
           ...state.elements,

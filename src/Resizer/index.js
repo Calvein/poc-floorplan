@@ -77,10 +77,11 @@ class Resizer extends Component {
     this.props.onDragEnd(this.calculateDragDistance(e))
   }
 
-  makeHandleDragAnchor = ({ vertical, horizontal }) => (e) => {
+  makeHandleDragAnchor = ({ end, vertical, horizontal }) => (e) => {
     const {
       currentPosition,
       onResize,
+      onResizeEnd,
     } = this.props
     const {
       clientX,
@@ -128,7 +129,9 @@ class Resizer extends Component {
       y: newHeight / oldHeight,
     }
 
-    onResize({ translate, scale })
+    const onChange = end ? onResizeEnd : onResize;
+
+    onChange({ translate, scale })
   }
 
   calculateRotation = (e) => {
@@ -198,38 +201,46 @@ class Resizer extends Component {
           <Anchor
             vertical="top"
             horizontal="left"
-            makeOnDrag={this.makeHandleDragAnchor}
+            onDrag={this.makeHandleDragAnchor({ vertical: 'top', horizontal: 'left' })}
+            onDragEnd={this.makeHandleDragAnchor({ end: true, vertical: 'top', horizontal: 'left' })}
           />
           <Anchor
             vertical="top"
-            makeOnDrag={this.makeHandleDragAnchor}
+            onDrag={this.makeHandleDragAnchor({ vertical: 'top' })}
+            onDragEnd={this.makeHandleDragAnchor({ end: true, vertical: 'top' })}
           />
           <Anchor
             vertical="top"
             horizontal="right"
-            makeOnDrag={this.makeHandleDragAnchor}
+            onDrag={this.makeHandleDragAnchor({ vertical: 'top', horizontal: 'right' })}
+            onDragEnd={this.makeHandleDragAnchor({ end: true, vertical: 'top', horizontal: 'right' })}
           />
           <Anchor
             horizontal="right"
-            makeOnDrag={this.makeHandleDragAnchor}
+            onDrag={this.makeHandleDragAnchor({ horizontal: 'right' })}
+            onDragEnd={this.makeHandleDragAnchor({ end: true, horizontal: 'right' })}
           />
           <Anchor
             vertical="bottom"
             horizontal="right"
-            makeOnDrag={this.makeHandleDragAnchor}
+            onDrag={this.makeHandleDragAnchor({ vertical: 'bottom', horizontal: 'right' })}
+            onDragEnd={this.makeHandleDragAnchor({ end: true, vertical: 'bottom', horizontal: 'right' })}
           />
           <Anchor
             vertical="bottom"
-            makeOnDrag={this.makeHandleDragAnchor}
+            onDrag={this.makeHandleDragAnchor({ vertical: 'bottom' })}
+            onDragEnd={this.makeHandleDragAnchor({ end: true, vertical: 'bottom' })}
           />
           <Anchor
             vertical="bottom"
             horizontal="left"
-            makeOnDrag={this.makeHandleDragAnchor}
+            onDrag={this.makeHandleDragAnchor({ vertical: 'bottom', horizontal: 'left' })}
+            onDragEnd={this.makeHandleDragAnchor({ end: true, vertical: 'bottom', horizontal: 'left' })}
           />
           <Anchor
             horizontal="left"
-            makeOnDrag={this.makeHandleDragAnchor}
+            onDrag={this.makeHandleDragAnchor({ horizontal: 'left' })}
+            onDragEnd={this.makeHandleDragAnchor({ end: true, horizontal: 'left' })}
           />
           <Anchor
             isRotation
