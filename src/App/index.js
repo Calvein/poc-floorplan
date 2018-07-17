@@ -94,22 +94,35 @@ class App extends Component {
       selectedElements,
     } = this.state
 
+    const minX = Math.min(...selectedElements.map((id) => elements[id].bbox.x));
+    const maxX = Math.max(...selectedElements.map((id) => elements[id].bbox.x + elements[id].bbox.width));
+    const selectionWidth = maxX - minX;
+
     const newElements = selectedElements.reduce((acc, id) => {
       const element = elements[id]
       const newId = uniqueId()
+      const newPath = svgpath(element.path).translate(selectionWidth + 10).toString();
 
       return {
         ...acc,
         [newId]: {
           ...element,
           id: newId,
-          x: element.x + element.width + 10,
-          label: `${element.label} (${newId})`,
+          label: `Table ${newId}`,
+          path: newPath,
+          bbox: this.getBbox(newPath),
         }
       }
     }, {})
 
     this.addElements(newElements)
+
+    this.setState(state => ({
+      selectedElements: [
+        ...state.selectedElements,
+        ...Object.keys(newElements),
+      ]
+    }))
   }
 
   editSelectedElements = (fn) => {
