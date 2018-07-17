@@ -150,7 +150,7 @@ class Resizer extends Component {
     const y2 = clientY
 
     const rad = Math.atan2(y2 - y1, x2 - x1)
-    const deg = (-180 - 45) + rad * 180 / Math.PI
+    const deg = 90 + rad * 180 / Math.PI
 
     return deg;
   }

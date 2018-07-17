@@ -29,8 +29,8 @@
 }
 
 .ResizerAnchor-rotation {
-  top: -24px;
-  left: -24px;
+  top: -35px;
+  left: 50%;
   background: var(--orange);
 }
 
