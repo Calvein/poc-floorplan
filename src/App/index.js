@@ -138,10 +138,19 @@ class App extends Component {
 
   handleSnapOnGrid = () => {
     this.editSelectedElements((element) => {
+      const newPosition = {
+        x: Math.round(element.bbox.x / GRID_WIDTH) * GRID_WIDTH,
+        y: Math.round(element.bbox.y / GRID_WIDTH) * GRID_WIDTH,
+      }
+      const newPath = svgpath(element.path).translate(
+        newPosition.x - element.bbox.x,
+        newPosition.y - element.bbox.y,
+      ).toString();
+
       return {
         ...element,
-        x: Math.round(element.x / GRID_WIDTH) * GRID_WIDTH,
-        y: Math.round(element.y / GRID_WIDTH) * GRID_WIDTH,
+        path: newPath,
+        bbox: this.getBbox(newPath),
       }
     })
   }
