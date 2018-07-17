@@ -163,17 +163,34 @@ class App extends Component {
 
     let modifiers = {}
 
-    if (position === 'top') {
-      modifiers.y = Math.min.apply(null, selectedElements.map((id) => elements[id].bbox.y))
-    } else if (position === 'left') {
-      modifiers.x = Math.min.apply(null, selectedElements.map((id) => elements[id].bbox.x))
+    switch (position) {
+      case 'top':
+        modifiers.y = Math.min.apply(null, selectedElements.map((id) => elements[id].bbox.y))
+        break;
+      case 'bottom':
+        modifiers.y = Math.max.apply(null, selectedElements.map((id) => elements[id].bbox.y + elements[id].bbox.height))
+        break;
+      case 'left':
+        modifiers.x = Math.min.apply(null, selectedElements.map((id) => elements[id].bbox.x))
+        break;
     }
 
     this.editSelectedElements((element) => {
-      const newPath = svgpath(element.path).translate(
-        position === 'left' ? -element.bbox.x + modifiers.x : 0,
-        position === 'top' ? -element.bbox.y + modifiers.y : 0,
-      ).toString();
+      let newPath = svgpath(element.path);
+
+      switch (position) {
+        case 'top':
+          newPath = newPath.translate(0, modifiers.y - element.bbox.y)
+          break;
+          case 'bottom':
+          newPath = newPath.translate(0, modifiers.y - element.bbox.height - element.bbox.y)
+          break;
+          case 'left':
+          newPath = newPath.translate(modifiers.x - element.bbox.x)
+          break;
+      }
+
+      newPath = newPath.toString();
 
       return {
         ...element,

@@ -48,6 +48,12 @@ class Toolbar extends Component {
         >
           Align left
         </button>
+        <button
+          disabled={!hasMultipleElementsSelected}
+          onClick={makeOnAlignElements('bottom')}
+        >
+          Align Bottom
+        </button>
       </div>
     )
   }
