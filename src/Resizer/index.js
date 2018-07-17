@@ -106,7 +106,7 @@ class Resizer extends Component {
       },
       bottomRight: {
         x: (!horizontal || horizontal === 'left') ? oldcurrentPositions.bottomRight.x : clientX,
-        y: (!vertical || vertical) === 'top' ? oldcurrentPositions.bottomRight.y : clientY,
+        y: (!vertical || vertical === 'top') ? oldcurrentPositions.bottomRight.y : clientY,
       },
     }
 
