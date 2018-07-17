@@ -176,6 +176,16 @@ class App extends Component {
       case 'right':
         modifiers.x = Math.max.apply(null, selectedElements.map((id) => elements[id].bbox.x + elements[id].bbox.width))
         break;
+      case 'center-x':
+        const minX = Math.min.apply(null, selectedElements.map((id) => elements[id].bbox.x));
+        const maxX = Math.max.apply(null, selectedElements.map((id) => elements[id].bbox.x + elements[id].bbox.width));
+        modifiers.x = minX + (maxX - minX) / 2;
+        break;
+      case 'center-y':
+        const minY = Math.min.apply(null, selectedElements.map((id) => elements[id].bbox.y));
+        const maxY = Math.max.apply(null, selectedElements.map((id) => elements[id].bbox.y + elements[id].bbox.height));
+        modifiers.y = minY + (maxY - minY) / 2;
+        break;
     }
 
     this.editSelectedElements((element) => {
@@ -193,6 +203,12 @@ class App extends Component {
           break;
           case 'right':
           newPath = newPath.translate(modifiers.x - element.bbox.width - element.bbox.x)
+          break;
+          case 'center-x':
+          newPath = newPath.translate(modifiers.x - (element.bbox.width / 2) - element.bbox.x)
+          break;
+          case 'center-y':
+          newPath = newPath.translate(0, modifiers.y - (element.bbox.height / 2) - element.bbox.y)
           break;
       }
 

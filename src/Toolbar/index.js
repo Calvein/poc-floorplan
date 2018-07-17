@@ -60,6 +60,18 @@ class Toolbar extends Component {
         >
           Align Right
         </button>
+        <button
+          disabled={!hasMultipleElementsSelected}
+          onClick={makeOnAlignElements('center-x')}
+        >
+          Align Center X
+        </button>
+        <button
+          disabled={!hasMultipleElementsSelected}
+          onClick={makeOnAlignElements('center-y')}
+        >
+          Align Center Y
+        </button>
       </div>
     )
   }
