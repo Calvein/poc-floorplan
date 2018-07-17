@@ -242,8 +242,8 @@ class App extends Component {
       selectedElements,
     } = this.state;
 
-    const minX = Math.min.apply(null, selectedElements.map((id) => elements[id].bbox.x));
-    const maxX = Math.max.apply(null, selectedElements.map((id) => elements[id].bbox.x + elements[id].bbox.width));
+    const minX = Math.min(...selectedElements.map((id) => elements[id].bbox.x));
+    const maxX = Math.max(...selectedElements.map((id) => elements[id].bbox.x + elements[id].bbox.width));
 
     const selectionWidth = maxX - minX;
     const elementsWidth = selectedElements.reduce((carry, id) => carry + elements[id].bbox.width, 0);
@@ -273,6 +273,45 @@ class App extends Component {
 
         return x + element.bbox.width + spacingX;
       }, minX);
+  }
+
+  handleDistributeY = () => {
+    const {
+      elements,
+      selectedElements,
+    } = this.state;
+
+    const minY = Math.min(...selectedElements.map((id) => elements[id].bbox.y));
+    const maxY = Math.max(...selectedElements.map((id) => elements[id].bbox.y + elements[id].bbox.height));
+
+    const selectionHeight = maxY - minY;
+    const elementsHeight = selectedElements.reduce((carry, id) => carry + elements[id].bbox.height, 0);
+
+    const spacing = (selectionHeight - elementsHeight) / (selectedElements.length - 1);
+
+    selectedElements
+      .slice()
+      .sort((a, b) => elements[a].bbox.y - elements[b].bbox.y)
+      .reduce((y, id) => {
+        const element = elements[id];
+        const newPath = svgpath(element.path)
+          .translate(0, -element.bbox.y)
+          .translate(0, y)
+          .toString();
+
+        this.setState(state => ({
+          elements: {
+            ...state.elements,
+            [element.id]: {
+              ...element,
+              path: newPath,
+              bbox: this.getBbox(newPath),
+            },
+          }
+        }))
+
+        return y + element.bbox.height + spacing;
+      }, minY);
   }
 
   componentDidMount() {
@@ -312,6 +351,7 @@ class App extends Component {
           onSnapOnGrid={this.handleSnapOnGrid}
           makeOnAlignElements={this.makeHandleAlignElements}
           onDistributeX={this.handleDistributeX}
+          onDistributeY={this.handleDistributeY}
         />
         <div className="App-wrapper">
           <Canvas

@@ -14,6 +14,7 @@ class Toolbar extends Component {
       onToggleGrid,
       onSnapOnGrid,
       onDistributeX,
+      onDistributeY,
       makeOnAlignElements,
     } = this.props
 
@@ -78,6 +79,12 @@ class Toolbar extends Component {
           onClick={onDistributeX}
         >
           Distribute X
+        </button>
+        <button
+          disabled={!hasMultipleElementsSelected}
+          onClick={onDistributeY}
+        >
+          Distribute Y
         </button>
       </div>
     )
