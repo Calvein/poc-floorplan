@@ -48,16 +48,21 @@ class App extends Component {
   }
 
   changeElement = (id, data) => {
-    this.setState((state) => ({
-      elements: {
-        ...state.elements,
-        [id]: {
-          ...state.elements[id],
-          ...data,
-          bbox: data.path ? this.getBbox(data.path) : state.elements[id].bbox,
+    this.setState((state) => {
+      const nextState = {
+        ...state.elements[id],
+        ...data,
+        bbox: data.path ? this.getBbox(data.path) : state.elements[id].bbox,
+        nextBbox: data.nextPath ? this.getBbox(data.nextPath) : state.elements[id].nextBbox,
+      };
+
+      return {
+        elements: {
+          ...state.elements,
+          [id]: nextState
         }
       }
-    }))
+    })
   }
 
   addElement = () => {
@@ -178,6 +183,8 @@ class App extends Component {
       path: 'M 0 0 L 100 0 L 100 100 L 0 100 Z',
       bbox: { x: 0, y: 0, width: 100, height: 100 },
       pax: 2,
+      nextPath: null,
+      nextBbox: null,
     }
 
     this.addElement()

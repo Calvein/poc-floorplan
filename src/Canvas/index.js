@@ -55,11 +55,30 @@ class Canvas extends Component {
 
   handleDrag = (data) => {
     this.changeElement((element) => ({
+      nextPath: svgpath(element.path).translate(data.x, data.y).toString(),
+    }))
+  }
+
+  handleDragEnd = (data) => {
+    this.changeElement((element) => ({
       path: svgpath(element.path).translate(data.x, data.y).toString(),
     }))
   }
 
   handleRotate = (data) => {
+    this.changeElement((element) => {
+      return {
+        // @TODO Add diff with element's deg
+        nextPath: svgpath(element.path).rotate(
+          data.deg,
+          element.bbox.x + element.bbox.width / 2,
+          element.bbox.y + element.bbox.height / 2,
+        ).toString(),
+      }
+    })
+  }
+
+  handleRotateEnd = (data) => {
     this.changeElement((element) => {
       return {
         // @TODO Add diff with element's deg
@@ -110,7 +129,7 @@ class Canvas extends Component {
     })
   }
 
-  getResizePosition = () => {
+  getResizePosition = ({ next }) => {
     const {
       elements,
       selectedElements,
@@ -119,12 +138,16 @@ class Canvas extends Component {
     // @TODO Account for the deg of the elements too
     const position = selectedElements
       .map((id) => elements.find((d) => d.id === id))
-      .reduce((acc, element) => ({
-        x1: Math.min(acc.x1, element.bbox.x),
-        y1: Math.min(acc.y1, element.bbox.y),
-        x2: Math.max(acc.x2, element.bbox.x + element.bbox.width),
-        y2: Math.max(acc.y2, element.bbox.y + element.bbox.height),
-      }), {
+      .reduce((acc, element) => {
+        const bbox = next ? element.nextBbox || element.bbox : element.bbox;
+
+        return {
+          x1: Math.min(acc.x1, bbox.x),
+          y1: Math.min(acc.y1, bbox.y),
+          x2: Math.max(acc.x2, bbox.x + bbox.width),
+          y2: Math.max(acc.y2, bbox.y + bbox.height),
+        }
+      }, {
         x1: Infinity,
         y1: Infinity,
         x2: -Infinity,
@@ -194,34 +217,39 @@ class Canvas extends Component {
                 fill="url(#grid)"
               />
             )}
-            {elements.map((d) => (
-              <g
-                key={d.id}
-                className={classnames(
-                  { 'Canvas-element-selected': selectedElements.includes(d.id) },
-                )}
-              >
-                <path
-                  className="Canvas-rect"
-                  d={d.path}
-                  onMouseDown={this.makeHandleClickElement(d.id)}
-                />
+            {elements.map((d) => {
+              const currentBbox = d.nextBbox || d.bbox;
+              const currentPath = d.nextPath || d.path;
+
+              return (
                 <g
-                  className="Canvas-text"
-                  transform={`translate(${d.bbox.x + d.bbox.width / 2} ${d.bbox.y + d.bbox.height / 2})`}
+                  key={d.id}
+                  className={classnames(
+                    { 'Canvas-element-selected': selectedElements.includes(d.id) },
+                  )}
                 >
-                  <text className="Canvas-text-label">
-                    {d.label}
-                  </text>
-                  <text
-                    className="Canvas-text-pax"
-                    dy="18"
+                  <path
+                    className="Canvas-rect"
+                    d={currentPath}
+                    onMouseDown={this.makeHandleClickElement(d.id)}
+                  />
+                  <g
+                    className="Canvas-text"
+                    transform={`translate(${currentBbox.x + currentBbox.width / 2} ${currentBbox.y + currentBbox.height / 2})`}
                   >
-                    {d.pax}p
-                  </text>
+                    <text className="Canvas-text-label">
+                      {d.label}
+                    </text>
+                    <text
+                      className="Canvas-text-pax"
+                      dy="18"
+                    >
+                      {d.pax}p
+                    </text>
+                  </g>
                 </g>
-              </g>
-            ))}
+              )
+            })}
           </g>
         </svg>
         <div className="Canvas-zoom">
@@ -237,15 +265,18 @@ class Canvas extends Component {
         </div>
         {selectedElements.length >= 1 && (
           <Resizer
-            position={this.getResizePosition()}
+            currentPosition={this.getResizePosition({ next: false })}
+            displayPosition={this.getResizePosition({ next: true })}
             canvasWidth={canvasWidth}
             canvasHeight={canvasHeight}
             canvasX={canvasX}
             canvasY={canvasY}
             scale={scale}
             onDrag={this.handleDrag}
+            onDragEnd={this.handleDragEnd}
             onResize={this.handleResize}
             onRotate={this.handleRotate}
+            onRotateEnd={this.handleRotateEnd}
           />
         )}
       </div>
