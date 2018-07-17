@@ -1,6 +1,7 @@
 import React, { Component, createRef } from 'react'
 import { uniqueId } from 'lodash'
 import getBounds from 'svg-path-bounds';
+import svgpath from 'svgpath';
 
 import Toolbar from '../Toolbar'
 import Canvas from '../Canvas'
@@ -152,16 +153,25 @@ class App extends Component {
     } = this.state
 
     let modifiers = {}
+
     if (position === 'top') {
-      modifiers.y = Math.min.apply(null, selectedElements.map((id) => elements[id].y))
+      modifiers.y = Math.min.apply(null, selectedElements.map((id) => elements[id].bbox.y))
     } else if (position === 'left') {
-      modifiers.x = Math.min.apply(null, selectedElements.map((id) => elements[id].x))
+      modifiers.x = Math.min.apply(null, selectedElements.map((id) => elements[id].bbox.x))
     }
 
-    this.editSelectedElements((element) => ({
-      ...element,
-      ...modifiers,
-    }))
+    this.editSelectedElements((element) => {
+      const newPath = svgpath(element.path).translate(
+        position === 'left' ? -element.bbox.x + modifiers.x : 0,
+        position === 'top' ? -element.bbox.y + modifiers.y : 0,
+      ).toString();
+
+      return {
+        ...element,
+        path: newPath,
+        bbox: this.getBbox(newPath),
+      }
+    })
   }
 
   handleClickShowData = () => {
