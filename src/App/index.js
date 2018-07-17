@@ -236,6 +236,45 @@ class App extends Component {
     } catch (e) {}
   }
 
+  handleDistributeX = () => {
+    const {
+      elements,
+      selectedElements,
+    } = this.state;
+
+    const minX = Math.min.apply(null, selectedElements.map((id) => elements[id].bbox.x));
+    const maxX = Math.max.apply(null, selectedElements.map((id) => elements[id].bbox.x + elements[id].bbox.width));
+
+    const selectionWidth = maxX - minX;
+    const elementsWidth = selectedElements.reduce((carry, id) => carry + elements[id].bbox.width, 0);
+
+    const spacingX = (selectionWidth - elementsWidth) / (selectedElements.length - 1);
+
+    selectedElements
+      .slice()
+      .sort((a, b) => elements[a].bbox.x - elements[b].bbox.x)
+      .reduce((x, id) => {
+        const element = elements[id];
+        const newPath = svgpath(element.path)
+          .translate(-element.bbox.x)
+          .translate(x)
+          .toString();
+
+        this.setState(state => ({
+          elements: {
+            ...state.elements,
+            [element.id]: {
+              ...element,
+              path: newPath,
+              bbox: this.getBbox(newPath),
+            },
+          }
+        }))
+
+        return x + element.bbox.width + spacingX;
+      }, minX);
+  }
+
   componentDidMount() {
     const {
       width,
@@ -272,6 +311,7 @@ class App extends Component {
           onToggleGrid={this.handleToggleGrid}
           onSnapOnGrid={this.handleSnapOnGrid}
           makeOnAlignElements={this.makeHandleAlignElements}
+          onDistributeX={this.handleDistributeX}
         />
         <div className="App-wrapper">
           <Canvas

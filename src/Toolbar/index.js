@@ -13,6 +13,7 @@ class Toolbar extends Component {
       onDuplicateElements,
       onToggleGrid,
       onSnapOnGrid,
+      onDistributeX,
       makeOnAlignElements,
     } = this.props
 
@@ -71,6 +72,12 @@ class Toolbar extends Component {
           onClick={makeOnAlignElements('center-y')}
         >
           Align Center Y
+        </button>
+        <button
+          disabled={!hasMultipleElementsSelected}
+          onClick={onDistributeX}
+        >
+          Distribute X
         </button>
       </div>
     )
