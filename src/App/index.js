@@ -333,9 +333,20 @@ class App extends Component {
       height,
     } = this.canvasRef.current.getBoundingClientRect()
 
+    const tableSize = 100
+    const x = width / 2 - tableSize / 2
+    const y = height / 2 - tableSize / 2
+
     this.defaultElement = {
-      path: 'M100 100 L150 125 L200 100 L200 200 L100 200 Z',
-      bbox: { x: 100, y: 100, width: 100, height: 100 },
+      path: `
+        M${x} ${y}
+        L${x + tableSize / 2} ${y + tableSize / 4}
+        L${x + tableSize} ${y}
+        L${x + tableSize} ${y + tableSize}
+        L${x} ${y + tableSize}
+        Z
+      `,
+      bbox: { x, y, width: tableSize, height: tableSize },
       pax: 2,
       nextPath: null,
       nextBbox: null,
